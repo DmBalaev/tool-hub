@@ -1,6 +1,5 @@
 package dm.dm.toolservice.account;
 
-import dm.dm.toolservice.tool.Tool;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

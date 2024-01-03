@@ -18,7 +18,7 @@ import java.util.List;
 public class AccountServiceImpl implements AccountService{
     private final AccountRepository accountRepository;
     private final AccountMapper accountConvector;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)

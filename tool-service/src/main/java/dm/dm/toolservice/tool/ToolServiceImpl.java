@@ -43,7 +43,7 @@ public class ToolServiceImpl implements ToolService {
         var currentUser = getAccount(userDetails);
         var entity = Tool.builder()
                 .name(dto.getName())
-                .price(dto.getPrice())
+                //.price(dto.getPrice())
                 .category(dto.getCategory())
                 .owner(currentUser)
                 .build();
@@ -61,9 +61,9 @@ public class ToolServiceImpl implements ToolService {
             throw new NotHavePermissions("You can't update, you are not the owner");
         }
         //Todo: расмотреть вариант передавать Map<String,Object>update итерироваться по нему и обновлять при помощи switch/case
-        if (dto.getPrice() != null) {
-            tool.setPrice(dto.getPrice());
-        }
+//        if (dto.getPrice() != null) {
+//            tool.setPrice(dto.getPrice());
+//        }
         if (dto.getName() != null) {
             tool.setName(dto.getName());
         }

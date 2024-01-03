@@ -14,19 +14,28 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Builder
+@Table(name = "tools")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Tool {
+    @SequenceGenerator(
+            name = "tool_sequence",
+            sequenceName = "tool_sequence",
+            allocationSize = 1
+    )
     @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "tool_sequence"
+    )
     private Long id;
     private String name;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "owner_id")
     private Account owner;
-    private boolean isAvailable;
-    private BigDecimal price;
+    private Boolean isAvailable;
+    private Long price;
 
     @Enumerated(EnumType.STRING)
     private Category category;

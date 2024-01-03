@@ -11,7 +11,7 @@ public class ToolMapper implements Function<Tool, ToolDto> {
     public ToolDto apply(Tool tool) {
         return ToolDto.builder()
                 .name(tool.getName())
-                .price(tool.getPrice())
+               // .price(tool.getPrice())
                 .build();
     }
 }
