@@ -91,7 +91,7 @@ public class ToolServiceImpl implements ToolService {
     }
 
     private Tool getTool(long id) {
-        return toolRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Tool with id:%s not found", id)));
+            return toolRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException(String.format("Tool with id:%s not found", id)));
     }
 }
