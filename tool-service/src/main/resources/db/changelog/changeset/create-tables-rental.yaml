@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: create rental table and sequence
+      author: dm
+      changes:
+        - createTable:
+            tableName: rentals
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: renter_account_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tool_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: startDate
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: endDate
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+        - createSequence:
+            cycle: true
+            dataType: BIGINT
+            incrementBy: 1
+            sequenceName: rental_sequence
+            startValue: 1
+        - addForeignKeyConstraint:
+            baseTableName: rentals
+            baseColumnNames: renter_account_id
+            constraintName: fk_renter_account
+            referencedTableName: account
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: rentals
+            baseColumnNames: tool_id
+            constraintName: fk_tool
+            referencedTableName: tools
+            referencedColumnNames: id
+            onDelete: CASCADE

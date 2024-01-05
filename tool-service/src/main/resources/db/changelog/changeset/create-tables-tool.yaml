@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: create tool table and sequence
+      author: dm
+      changes:
+        - createTable:
+            tableName: tools
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: owner_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_available
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+        - createSequence:
+            cycle: true
+            dataType: BIGINT
+            incrementBy: 1
+            sequenceName: tool_sequence
+            startValue: 1
+        - addForeignKeyConstraint:
+            baseTableName: tools
+            baseColumnNames: owner_id
+            constraintName: fk_owner
+            referencedTableName: account
+            referencedColumnNames: id
+            onDelete: CASCADE

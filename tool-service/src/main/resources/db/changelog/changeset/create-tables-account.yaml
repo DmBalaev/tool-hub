@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: create account table and sequence
+      author: dm
+      changes:
+        - createTable:
+            tableName: account
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+        - createSequence:
+            cycle: true
+            dataType: BIGINT
+            incrementBy: 1
+            sequenceName: account_sequence
+            startValue: 1
