@@ -57,5 +57,4 @@ public class AccountServiceImpl implements AccountService{
 
         return accountConvector.apply(accountRepository.save(account));
     }
-
 }
