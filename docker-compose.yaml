@@ -7,7 +7,15 @@ services:
       POSTGRES_USER: adm
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: tool_db
+    ports:
+     - "5432:5432"
     restart: unless-stopped
+
+  eureka:
+    build: ./registry-service-eureka
+    container_name: eureka-service
+    ports:
+      - "8761:8761"
 
   tool-app:
     build: ./tool-service
