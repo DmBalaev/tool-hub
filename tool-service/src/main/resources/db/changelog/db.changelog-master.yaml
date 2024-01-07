@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changeset/create-tables-tool.yaml
   - include:
       file: db/changelog/changeset/create-tables-rental.yaml
+  - include:
+      file: db/changelog/changeset/add-description-columns-and-modify-price-column.yaml

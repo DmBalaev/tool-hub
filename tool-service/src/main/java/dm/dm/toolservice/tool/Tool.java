@@ -1,6 +1,5 @@
 package dm.dm.toolservice.tool;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import dm.dm.toolservice.account.Account;
 import dm.dm.toolservice.tool.enums.Category;
 import jakarta.persistence.*;
@@ -30,14 +29,16 @@ public class Tool {
     )
     private Long id;
     private String name;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private Account owner;
     private Boolean isAvailable;
-    private Long price;
+
+    @Column(precision = 9, scale = 2)
+    private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
     private Category category;
-    //TODO добавить характеристики HashMap
 }
