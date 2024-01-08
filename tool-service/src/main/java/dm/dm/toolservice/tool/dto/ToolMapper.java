@@ -10,8 +10,11 @@ public class ToolMapper implements Function<Tool, ToolDto> {
     @Override
     public ToolDto apply(Tool tool) {
         return ToolDto.builder()
+                .id(tool.getId())
                 .name(tool.getName())
-               // .price(tool.getPrice())
+                .description(tool.getDescription())
+                .price(tool.getPrice().doubleValue())
+                .category(tool.getCategory())
                 .build();
     }
 }

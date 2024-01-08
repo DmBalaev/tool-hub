@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,19 +42,38 @@ public class ToolController {
     }
 
     @GetMapping("/{toolId}")
-    public ResponseEntity<ToolDto> getTool(@PathVariable long toolId){
+    public ResponseEntity<ToolDto> searchTool(@PathVariable long toolId){
         return ResponseEntity.ok(toolService.getById(toolId));
     }
 
     @GetMapping
     public List<ToolDto> getToolsByQuery(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam() String text
             //Todo: добавить фильтрацию и сортировку
     ){
         Pageable pageable = PageRequest.of(page,size);
-        return toolService.tools(pageable);
+        return toolService.tools(text, pageable);
     }
 
+    @GetMapping("/owner/{ownerId}")
+    public List<ToolDto> getToolsByOwner(
+            @PathVariable long ownerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        Pageable pageable = PageRequest.of(page,size, Sort.by("id").ascending());
+        return toolService.getToolsByOwner(pageable, ownerId);
+    }
+
+    @DeleteMapping("/{toolId}")
+    public ResponseEntity<?> deleteTool(
+            @PathVariable long toolId,
+            @AuthenticationPrincipal UserDetails currentUser
+    ){
+        toolService.delete(toolId, currentUser);
+        return ResponseEntity.accepted().body("Succefuly");
+    }
 
 }
