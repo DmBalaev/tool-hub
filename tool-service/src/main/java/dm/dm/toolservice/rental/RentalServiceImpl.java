@@ -38,7 +38,7 @@ public class RentalServiceImpl implements RentalService {
 
         var rental = Rental.builder()
                 .tool(tool)
-                .renterAccount(account)
+                .renter(account)
                 .startDate(request.getStart())
                 .endDate(request.getEnd())
                 .status(RentalStatus.PENDING)
@@ -47,8 +47,8 @@ public class RentalServiceImpl implements RentalService {
 
         rentalRepository.save(rental);
         toolRepository.save(tool);
-        log.info("Account {} want rent the tool with id {}", currentUser.getUsername(), toolId);
-        //Todo: добавить логику уведомления что иструмент хотят взять в аренду
+        log.info("RentalService: Account {} want rent the tool with id {}", currentUser.getUsername(), toolId);
+        //Todo: добавить логику уведомления
         return rentalMapper.apply(rental);
     }
 
@@ -66,7 +66,7 @@ public class RentalServiceImpl implements RentalService {
         rental.setStatus(newRentalStatus);
         rentalRepository.save(rental);
 
-        log.info("{} has {} the rental with ID: {}. New status: {}",
+        log.info("RentalService: {} has {} the rental with ID: {}. New status: {}",
                 currentUser.getUsername(),
                 isApproved ? "approved" : "rejected",
                 rentalId,
@@ -90,7 +90,7 @@ public class RentalServiceImpl implements RentalService {
 
         rentalRepository.save(rental);
         //toolRepository.save(rental.getTool()); проверить нужна ли
-        log.info("Rental with id {} has been closed by owner {}. Tool with id {} is now available",
+        log.info("RentalService: Rental with id {} has been closed by owner {}. Tool with id {} is now available",
                 rentalId, userDetails.getUsername(), rental.getTool().getId());
         return rentalMapper.apply(rental);
     }
@@ -98,10 +98,10 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional(readOnly = true)
     public RentalResponse getRentalById(Long rentalId, UserDetails currentUser) {
-        log.info("Account with name {} gets rental with id {}", currentUser.getUsername(), rentalId);
+        log.info("RentalService: Account with name {} gets rental with id {}", currentUser.getUsername(), rentalId);
         var rental = getRental(rentalId);
 
-        if (!rental.getRenterAccount().getEmail().equals(currentUser.getUsername()) ||
+        if (!rental.getRenter().getEmail().equals(currentUser.getUsername()) ||
                 rental.getTool().getOwner().getEmail().equals(currentUser.getUsername())) {
             throw new UnauthorizedUserException("Only the author or owner can view");
         }
@@ -111,6 +111,7 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Rental with id %s not found", rentalId)));
     }
 
+    //Todo: getRentalsByOwner и getMyRentals подумать над неймингом методов
     @Override
     @Transactional(readOnly = true)
     public List<RentalResponse> getRentalsByOwner(Pageable pageable, String filter, UserDetails currentUser) {
@@ -121,13 +122,12 @@ public class RentalServiceImpl implements RentalService {
         } catch (IllegalArgumentException e) {
             throw new UnsupportedStatusException("Unknown filter");
         }
-        List<Rental> rentals = null;
+        List<Rental> rentals;
         switch (rentalFilter) {
-            case ALL -> rentalRepository.findAllByToolOwner(account.getId(), pageable);
-            case WAITING -> rentalRepository.findAllByToolOwnerAndFilterWaiting(account.getId(), pageable);
-            case CURRENT -> rentalRepository.findAllByToolOwnerAndFilterCurrent(account.getId(), pageable);
-            case COMPLETED -> rentalRepository.findAllByToolOwnerAndFilterCompleted(account.getId(), pageable);
-            case REJECTED -> rentalRepository.findAllByToolOwnerAndFilterRejected(account.getId(), pageable);
+            case ALL -> rentals =  rentalRepository.findAllByToolOwner(account.getId(), pageable);
+            case CURRENT -> rentals = rentalRepository.findAllByToolOwnerCurrent(account.getId(), pageable);
+            case COMPLETED -> rentals = rentalRepository.findAllByToolOwnerAndStatus(account.getId(),RentalStatus.COMPLETED, pageable);
+            case REJECTED -> rentals = rentalRepository.findAllByToolOwnerAndStatus(account.getId(), RentalStatus.CANCELED, pageable);
             default -> throw new UnsupportedStatusException("Unknown filter");
         }
 
@@ -139,22 +139,23 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional(readOnly = true)
     public List<RentalResponse> getMyRentals(Pageable pageable, String filter, UserDetails currentUser) {
+        log.info("Rental service: {} call method get my rentals", currentUser.getUsername());
         var account = getAccount(currentUser.getUsername());
         RentalFilter rentalFilter;
         try {
-            rentalFilter = RentalFilter.valueOf(filter);
+            rentalFilter = RentalFilter.valueOf(filter.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new UnsupportedStatusException("Unknown filter");
         }
-        List<Rental> rentals = null;
+        List<Rental> rentals;
         switch (rentalFilter) {
-            case ALL -> rentals = rentalRepository.findAllByRenterAccount_Id(account.getId(), pageable);
-            case WAITING -> rentalRepository.findAllByRenterAccountAndFilterWaiting(account.getId(), pageable);
-            case CURRENT -> rentalRepository.findAllByRenterAccountAndFilterCurrent(account.getId(), pageable);
-            case COMPLETED -> rentalRepository.findAllByRenterAccountAndFilterCompleted(account.getId(), pageable);
-            case REJECTED -> rentalRepository.findAllByRenterAccountAndFilterRejected(account.getId(), pageable);
+            case ALL -> rentals =  rentalRepository.findAllByRenterId(account.getId(), pageable);
+            case CURRENT -> rentals = rentalRepository.findCurrentRentals(account.getId(), pageable);
+            case COMPLETED -> rentals = rentalRepository.findAllByRenterIdAndStatus(account.getId(),RentalStatus.COMPLETED, pageable);
+            case REJECTED -> rentals = rentalRepository.findAllByRenterIdAndStatus(account.getId(), RentalStatus.CANCELED, pageable);                           //findAllByRenterAccountAndFilterRejected(account.getId(), pageable);
             default -> throw new UnsupportedStatusException("Unknown filter");
         }
+        assert rentals != null;
         return rentals.stream()
                 .map(rentalMapper)
                 .toList();

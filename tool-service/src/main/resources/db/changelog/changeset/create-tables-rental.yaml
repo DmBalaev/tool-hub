@@ -13,7 +13,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: renter_account_id
+                  name: renter_id
                   type: BIGINT
                   constraints:
                     nullable: false
@@ -23,12 +23,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: startDate
+                  name: start_date
                   type: TIMESTAMP
                   constraints:
                     nullable: false
               - column:
-                  name: endDate
+                  name: end_date
                   type: TIMESTAMP
                   constraints:
                     nullable: false
@@ -45,7 +45,7 @@ databaseChangeLog:
             startValue: 1
         - addForeignKeyConstraint:
             baseTableName: rentals
-            baseColumnNames: renter_account_id
+            baseColumnNames: renter_id
             constraintName: fk_renter_account
             referencedTableName: account
             referencedColumnNames: id

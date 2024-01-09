@@ -30,11 +30,11 @@ public class Rental {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "renter_account_id", nullable = false)
-    private Account renterAccount;
+    @JoinColumn(nullable = false)
+    private Account renter;
 
     @ManyToOne
-    @JoinColumn(name = "tool_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Tool tool;
 
     private LocalDateTime startDate;

@@ -38,7 +38,7 @@ public class RentalController {
         return ResponseEntity.ok(rental);
     }
 
-    @PatchMapping("/{toolId}/return")
+    @PatchMapping("/return/{toolId}")
     public ResponseEntity<RentalResponse> returnRental(
             @PathVariable long toolId,
             @AuthenticationPrincipal UserDetails currentUser
@@ -58,7 +58,7 @@ public class RentalController {
 
     @GetMapping
     public ResponseEntity<List<RentalResponse>> getAllRenterAccount(
-            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(name = "filter", defaultValue = "ALL") String filter,
             @AuthenticationPrincipal UserDetails currentUser
@@ -71,7 +71,7 @@ public class RentalController {
 
     @GetMapping("/owner")
     public ResponseEntity<List<RentalResponse>> getAllByOwner(
-            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(name = "filter", defaultValue = "ALL") String filter,
             @AuthenticationPrincipal UserDetails currentUser
