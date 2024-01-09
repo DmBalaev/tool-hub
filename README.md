@@ -37,7 +37,9 @@
 
 
 ## Спецификация Swagger для API
+После запуска приложения будет доступен UI
 
+Swagger UI: http://localhost:8080/swagger-ui/index.html
 
 ## Планы по доработке проекта
 
